@@ -1,0 +1,86 @@
+<div class="wrapper">
+  <ul class="page-nav">
+    <li>
+      <label>Admin <mat-icon>arrow_right</mat-icon></label>
+    </li>
+    <li>
+      <label>Coins <mat-icon>arrow_right</mat-icon></label>
+    </li>
+    <li>
+      <label>List</label>
+    </li>
+  </ul>
+  <section class="filter">
+    <mat-form-field>
+      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+    </mat-form-field>
+  </section>
+
+  <mat-card class="table">
+    <app-loader [hidden]="coinsLength | async"></app-loader>
+    <mat-table #table [dataSource]="coinsDatasource" matSort (matSortChange)="sortData($event)">
+      <ng-container matColumnDef="rank">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="rank" > # </mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.finance.rank}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="name"> Name </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <p class="name">{{element.name}}</p>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="price">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="price"> Price </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <p *ngIf="element.finance.price > 1" class="price">{{element.finance.price | currency:'USD'}}</p>
+          <p *ngIf="element.finance.price < 1" class="price">{{element.finance.price | currency:'USD':'symbol-narrow':'1.4-4'}}</p>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="marketCap">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="marketCap"> Market Cap </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <p *ngIf="element.finance.marketCap">{{element.finance.marketCap | currency:'USD':'symbol-narrow':'4.0'}}</p>
+          <p *ngIf="!element.finance.marketCap">?</p>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="currentSupply">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="currentSupply"> Supply </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <p *ngIf="element.finance.currentSupply">{{element.finance.currentSupply | number}} <small>{{element.symbol}}</small></p>
+          <p *ngIf="!element.finance.currentSupply">?</p>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="volume">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="volume"> Volume (24h) </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <p *ngIf="element.finance.volume">{{element.finance.volume | currency:'USD':'symbol-narrow':'4.0'}}</p>
+          <p *ngIf="!element.finance.volume">?</p>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="changeDay">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="changeDay"> Change (24h) </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <p *ngIf="element.finance.volume" [ngClass]="element.finance.changeDay > 0 ? 'green':'red'" class="price-change">{{element.finance.changeDay | number:'.2'}}%</p>
+          <p *ngIf="!element.finance.volume">?</p>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="action">
+        <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <button mat-button color="default" (click)="view(element.slug)" *ngIf="element.gitStatus.synced || !element.gitStatus.available">view</button>
+          <button mat-button color="default" (click)="view(element.slug)" *ngIf="!element.gitStatus.synced && element.gitStatus.available">sync</button>
+        </mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="displayColumns; sticky: true"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayColumns;"></mat-row>
+
+    </mat-table>
+    <mat-paginator #paginator
+      [length] = "coinsLength | async"
+      [pageSize]="50"
+      [pageSizeOptions]="[50, 100, 200]"
+      (page)="goToNextPage($event)">
+    </mat-paginator>
+    <div *ngIf="pageEvent"></div>
+  </mat-card>
+</div>
