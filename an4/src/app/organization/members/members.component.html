@@ -1,0 +1,60 @@
+<div class="wrapper">
+  <app-loader [hidden]="loaded"></app-loader>
+  <ul class="page-nav">
+    <li>
+      <label>Admin <mat-icon>arrow_right</mat-icon></label>
+    </li>
+    <li>
+      <label>Coins <mat-icon>arrow_right</mat-icon></label>
+    </li>
+    <li>
+      <label>List</label>
+    </li>
+  </ul>
+  <mat-card>
+    <div *ngFor="let members of membersDatasource.members.value" class="member">
+      <div class="member-intro">
+        <div class="image-wrapper">
+          <img [src]="member.avatarUrl"/>
+        </div>
+        <div class="info-wrapper">
+          <p>{{member.name?member.name:member.login}}<br/>
+          <a [href]="member.url" target="_blank" class="external-link">@{{member.login}}</a></p>
+        </div>
+        <div class="contact-wrapper">
+          <mat-icon *ngIf="member.email" [matTooltip]="member.email">email</mat-icon>
+        </div>
+      </div>
+      <div class="stats-wrapper">
+        <table class="first member-table">
+          <thead>
+            <th>Organizations</th>
+            <th>Repositories</th>
+            <th>Watching</th>
+          </thead>
+          <tbody>
+            <td>{{member.organizations}}
+            <td>{{member.repositories}}</td>
+            <td>{{member.watching}}</td>
+          </tbody>
+        </table>
+        <table>
+          <thead>
+            <th>Pull requests</th>
+            <th>Stared</th>
+            <th>Followers</th>
+          </thead>
+          <tbody>
+            <td>{{member.pullRequests}}</td>
+            <td>{{member.starredRepositories}}</td>
+            <td>{{member.followers}}</td>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </mat-card>
+  <mat-paginator #paginator
+    [pageSize]="50"
+    [pageSizeOptions]="[50, 100, 200]">
+  </mat-paginator>
+</div>
