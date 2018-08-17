@@ -1,0 +1,87 @@
+<div class="wrapper">
+  <ul class="page-nav">
+    <li>
+      <label>Admin <mat-icon>arrow_right</mat-icon></label>
+    </li>
+    <li>
+      <label>Repositories <mat-icon>arrow_right</mat-icon></label>
+    </li>
+    <li>
+      <label>List</label>
+    </li>
+  </ul>
+  <section class="filter">
+    <mat-form-field>
+      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+    </mat-form-field>
+  </section>
+
+  <mat-card class="table">
+    <app-loader [hidden]="reposLength | async"></app-loader>
+    <mat-table #table [dataSource]="reposDatasource" matSort (matSortChange)="sortData($event)">
+      <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="name"> Name </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <p class="name">{{element.nameWithOwner}}</p>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="commits">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="commits"> Commits </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <p>{{element?.defaultBranchRef?.target?.history?.totalCount?element?.defaultBranchRef?.target?.history?.totalCount:0 | number}}</p>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="issues">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="issues"> Issues </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <p>{{element.issues | number}}</p>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="milestones">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="milestones"> Milestones </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <p>{{element.milestones | number}}</p>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="projects">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="projects"> Projects </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <p>{{element.projects | number}}</p>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="pullRequests">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="pullRequests"> Pull requests </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <p>{{element.pullRequests | number}}</p>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="releases">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="releases"> Releases </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <p>{{element.releases | number}}</p>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="stargazers">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="stargazers"> Stargazers </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <p>{{element.stargazers | number}}</p>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="watchers">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="watchers"> Watchers </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <p>{{element.watchers | number}}</p>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayColumns; sticky: true"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayColumns;"></mat-row>
+    </mat-table>
+    <mat-paginator #paginator
+      [length] = "reposLength | async"
+      [pageSize]="50"
+      [pageSizeOptions]="[50, 100, 200]"
+      (page)="goToNextPage($event)">
+    </mat-paginator>
+  </mat-card>
+</div>
