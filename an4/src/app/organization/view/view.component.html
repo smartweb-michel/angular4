@@ -1,0 +1,389 @@
+<app-loader [hidden]="loaded"></app-loader>
+
+<div class="wrapper">
+  <ul class="page-nav" *ngIf="coin">
+    <li>
+      <label>Admin <mat-icon>arrow_right</mat-icon></label>
+    </li>
+    <li>
+      <label>Coins <mat-icon>arrow_right</mat-icon></label>
+    </li>
+    <li>
+      <label>{{coin.name}}</label>
+    </li>
+  </ul>
+
+  <section class="grid" *ngIf="coin">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>
+          <p *ngIf="coin.finance.price > 1" class="coin-name">
+            <b>{{coin.name}}</b>
+            <i> {{coin.finance.price | currency:'USD'}} <small>USD</small></i>
+            <small *ngIf="coin.finance.volume" [ngClass]="coin.finance.changeDay > 0 ? 'green':'red'" class="price-change"> ({{coin.finance.changeDay | number:'.2'}}%)</small>
+            <small *ngIf="!coin.finance.volume">?</small>
+          </p>
+          <p *ngIf="coin.finance.price < 1" class="coin-name">
+            <b>{{coin.name}}</b>
+            <i> {{coin.finance.price | currency:'USD':'symbol-narrow':'1.4-4'}} <small>USD</small></i>
+            <small *ngIf="coin.finance.volume" [ngClass]="coin.finance.changeDay > 0 ? 'green':'red'" class="price-change"> ({{coin.finance.changeDay | number:'.2'}}%)</small>
+            <small *ngIf="!coin.finance.volume">?</small>
+          </p>
+        </mat-card-title>
+        <mat-card-subtitle>{{coin.symbol}}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <table class="first">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Market Cap</th>
+              <th>Volume (24h)</th>
+              <th>Circulating Supply</th>
+              <th *ngIf="coin.finance.currentSupply != coin.finance.maxSupply && coin.finance.maxSupply">Max Supply</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <p>#{{coin.finance.rank}}</p>
+              </td>
+              <td>
+                <p *ngIf="coin.finance.marketCap">{{coin.finance.marketCap | currency:'USD':'symbol-narrow':'4.0'}}</p>
+                <p *ngIf="!coin.finance.marketCap">?</p>
+              </td>
+              <td>
+                <p *ngIf="coin.finance.volume">{{coin.finance.volume | currency:'USD':'symbol-narrow':'4.0'}}</p>
+                <p *ngIf="!coin.finance.volume">?</p>
+              </td>
+              <td>
+                <p *ngIf="coin.finance.currentSupply">{{coin.finance.currentSupply | number}} <small>{{coin.symbol}}</small></p>
+                <p *ngIf="!coin.finance.currentSupply">?</p>
+              </td>
+              <td *ngIf="coin.finance.currentSupply != coin.finance.maxSupply && coin.finance.maxSupply">
+                <p *ngIf="coin.finance.maxSupply">{{coin.finance.maxSupply | number}} <small>{{coin.symbol}}</small></p>
+                <p *ngIf="!coin.finance.maxSupply">?</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <table>
+          <thead>
+            <tr>
+              <th>Change 1h</th>
+              <th>Change 24h</th>
+              <th>Change 7d</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><p [ngClass]="coin.finance.changeHour > 0 ? 'green':'red'" class="price-change"><span *ngIf="coin.finance.changeHour">{{coin.finance.changeHour}}%</span><span *ngIf="!coin.finance.changeHour">?</span></p></td>
+              <td><p [ngClass]="coin.finance.changeDay > 0 ? 'green':'red'" class="price-change"><span *ngIf="coin.finance.changeDay">{{coin.finance.changeDay}}%</span><span *ngIf="!coin.finance.changeDay">?</span></p></td>
+              <td><p [ngClass]="coin.finance.changeWeek > 0 ? 'green':'red'" class="price-change"><span *ngIf="coin.finance.changeWeek">{{coin.finance.changeWeek}}%</span><span *ngIf="!coin.finance.changeWeek">?</span></p></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <label><small>Last updated {{coin.finance.updatedAt | amFromUnix | amTimeAgo}}</small></label>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card>
+      <app-loader [hidden]="!isGithubLoading"></app-loader>
+      <mat-card-header>
+        <mat-card-title>
+          <p>
+            <b>Github</b>
+          </p>
+        </mat-card-title>
+        <mat-card-subtitle></mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div *ngIf="!coin.gitStatus.synced && !coin.gitStatus.syncing && !isGithubFormVisible && coin.gitStatus.available" class="centered">
+          <mat-icon class="warning-icon">warning</mat-icon>
+          <p>Github organization for {{coin.name}} isn't synced yet.</p>
+          <p>Visit Coin market cap <a href="https://coinmarketcap.com/currencies/{{coin.slug}}" target="_blank" class="coin-link">{{coin.name}}</a> page to get the organization Github link</p>
+          <div class="form-block">
+            <button mat-button (click)="showGithubForm()">Link Github account</button>
+            <button mat-button (click)="disableGithub()">Disable Github tracking</button>
+          </div>
+        </div>
+        <div *ngIf="!coin.gitStatus.synced && !coin.gitStatus.syncing && !isGithubFormVisible && !coin.gitStatus.available" class="centered">
+            <mat-icon class="warning-icon">info</mat-icon>
+            <p>Github tracking is disabled on {{coin.name}}.</p>
+            <p>Visit Coin market cap <a href="https://coinmarketcap.com/currencies/{{coin.slug}}" target="_blank" class="coin-link">{{coin.name}}</a> page to get the organization Github link</p>
+            <button mat-button (click)="enableGithub()">Enable Github tracking</button>
+        </div>
+        <div *ngIf="!coin.gitStatus.synced && !coin.gitStatus.syncing && isGithubFormVisible" class="centered">
+          <p>You are about to sync {{coin.name}} github organization profile.</p>
+          <p>Please enter Github organization name</p>
+          <form [formGroup]="githubForm" class="form" role="form">
+            <div class="form-block">
+              <mat-form-field>
+                <input matInput type="text" placeholder="Github organization name (ex: {{coin.slug}})" formControlName="organization">
+              </mat-form-field>
+            </div>
+            <div class="form-block">
+              <button mat-button [disabled]="!githubForm.valid" (click)="syncGithub()">Save</button>
+              <button mat-button (click)="hideGithubForm()" [disabled]="isGithubFormSubmitted">Cancel</button>
+            </div>
+          </form>
+        </div>
+        <div *ngIf="coin.gitStatus.syncing" class="centered">
+          <div *ngIf="coin.gitStatus.requestId && gitRequest">
+            <p *ngIf="gitRequest.status == 0">Your request for syncing <a [href]="'https://github.com/'+gitRequest.data[0].value" target="_blank">https://github.com/{{gitRequest.data[0].value}}</a> have been submitted.</p>
+            <p *ngIf="gitRequest.status == 1">Your request for syncing <a [href]="'https://github.com/'+gitRequest.data[0].value" target="_blank">https://github.com/{{gitRequest.data[0].value}}</a> is pending.</p>
+            <p *ngIf="gitRequest.status == 2">Your request for syncing <a [href]="'https://github.com/'+gitRequest.data[0].value" target="_blank">https://github.com/{{gitRequest.data[0].value}}</a> has been requested.</p>
+            <p *ngIf="gitRequest.status == 3">Your request for syncing <a [href]="'https://github.com/'+gitRequest.data[0].value" target="_blank">https://github.com/{{gitRequest.data[0].value}}</a> failed.</p>
+            <p *ngIf="gitRequest.status == 4">Your request for syncing <a [href]="'https://github.com/'+gitRequest.data[0].value" target="_blank">https://github.com/{{gitRequest.data[0].value}}</a> was successful</p>
+
+            <div *ngIf="gitRequest.status != 4 ">
+              <button mat-button (click)="resyncGithub()">Retry</button>
+              <button mat-button (click)="cancelGithub()">Cancel</button>
+            </div>
+          </div>
+          <div *ngIf="coin.gitStatus.requestId && !gitRequest">
+            <p>please wait a moment</p>
+          </div>
+          <div *ngIf="gitOrganization" class="organization-data">
+            <div class="grid-info">
+              <div>
+                <img [src]="gitOrganization.avatarUrl" />
+                <div class="git-org-info">
+                  <p>@{{gitOrganization.login}}<br/><a [href]="gitOrganization.websiteUrl" target="_blank">{{gitOrganization.websiteUrl}}</a></p>
+                </div>
+              </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Repositories</th>
+                    <th>Members</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <p>
+                        <span *ngIf="gitOrganization.repositoriesCount == 0" class="small-icon"><mat-icon>warning</mat-icon> 0</span>
+                        <span *ngIf="gitRepositories.length < gitOrganization.repositoriesCount" class="small-icon"><mat-icon>sync</mat-icon> {{gitRepositories.length}}/{{gitOrganization.repositoriesCount}}</span>
+                        <span *ngIf="gitRepositories.length == gitOrganization.repositoriesCount && gitOrganization.repositoriesCount > 0" class="small-icon"><mat-icon>done</mat-icon> {{gitRepositories.length}}</span>
+                      </p>
+                    </td>
+                    <td>
+                      <p>
+                        <span *ngIf="gitOrganization.membersCount == 0" class="small-icon"><mat-icon>warning</mat-icon> 0</span>
+                        <span *ngIf="gitMembers.length < gitOrganization.membersCount" class="small-icon"><mat-icon>sync</mat-icon> {{gitMembers.length}}/{{gitOrganization.membersCount}}</span>
+                        <span *ngIf="gitMembers.length == gitOrganization.membersCount && gitOrganization.membersCount > 0" class="small-icon"><mat-icon>done</mat-icon> {{gitMembers.length}}</span>
+                      </p>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="button-wrapper">
+              <button mat-button [disabled]="gitMembers.length != gitOrganization.membersCount || gitRepositories.length != gitOrganization.repositoriesCount" (click)="linkGithub()">Link @{{gitOrganization.login}}</button>
+              <button mat-button (click)="resyncGithub()">Re-sync @{{gitOrganization.login}}</button>
+              <button mat-button (click)="cancelGithub()">Cancel</button>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="coin.gitStatus.synced" class="centered">
+          <div class="grid-info organization-data" *ngIf="gitOrganization">
+            <div>
+              <img [src]="gitOrganization.avatarUrl" />
+              <div class="git-org-info">
+                <p><a [href]="'http://github.com'+gitOrganization.login" target="_blank" class="external-link">@{{gitOrganization.login}}</a><br/><a [href]="gitOrganization.websiteUrl" target="_blank" class="external-link">{{gitOrganization.websiteUrl}}</a></p>
+              </div>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Repositories</th>
+                  <th>Members</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <p>
+                      <span *ngIf="gitOrganization.repositoriesCount == 0" class="small-icon"><mat-icon>warning</mat-icon> 0</span>
+                      <span *ngIf="gitRepositories.length < gitOrganization.repositoriesCount" class="small-icon"><mat-icon>sync</mat-icon> {{gitRepositories.length}}/{{gitOrganization.repositoriesCount}}</span>
+                      <span *ngIf="gitRepositories.length == gitOrganization.repositoriesCount && gitOrganization.repositoriesCount > 0" class="small-icon"><mat-icon>done</mat-icon> {{gitRepositories.length}}</span>
+                    </p>
+                  </td>
+                  <td>
+                    <p>
+                      <span *ngIf="gitOrganization.membersCount == 0" class="small-icon"><mat-icon>warning</mat-icon> 0</span>
+                      <span *ngIf="gitMembers.length < gitOrganization.membersCount" class="small-icon"><mat-icon>sync</mat-icon> {{gitMembers.length}}/{{gitOrganization.membersCount}}</span>
+                      <span *ngIf="gitMembers.length == gitOrganization.membersCount && gitOrganization.membersCount > 0" class="small-icon"><mat-icon>done</mat-icon> {{gitMembers.length}}</span>
+                    </p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <table *ngIf="gitRepositories.length > 0 || gitMembers.length > 0" class="first">
+            <thead>
+              <tr>
+                <th>Commits</th>
+                <th>Forks</th>
+                <th>Issues</th>
+                <th>Milestone</th>
+                <th>Projects</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><p>{{calculateCommits() | number}}</p></td>
+                <td><p>{{calculateRepositoryProperty('forks') | number}}</p></td>
+                <td><p>{{calculateRepositoryProperty('issues') | number}}</p></td>
+                <td><p>{{calculateRepositoryProperty('milestones') | number}}</p></td>
+                <td><p>{{calculateRepositoryProperty('projects') | number}}</p></td>
+              </tr>
+            </tbody>
+          </table>
+          <table *ngIf="gitRepositories.length > 0 || gitMembers.length > 0">
+              <thead>
+                <tr>
+                  <th>Pull requests</th>
+                  <th>Releases</th>
+                  <th>Stargazers</th>
+                  <th>Watchers</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><p>{{calculateRepositoryProperty('pullRequests') | number}}</p></td>
+                  <td><p>{{calculateRepositoryProperty('releases') | number}}</p></td>
+                  <td><p>{{calculateRepositoryProperty('stargazers') | number}}</p></td>
+                  <td><p>{{calculateRepositoryProperty('watchers') | number}}</p></td>
+                </tr>
+              </tbody>
+            </table>
+        </div>
+      </mat-card-content>
+    </mat-card>
+    <mat-card *ngIf="gitOrganization?.website">
+      <mat-card-header>
+        <mat-card-title>
+          <p class="coin-name"><b>{{gitOrganization.website.title}}</b></p>
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p *ngIf="gitOrganization.website.description">{{gitOrganization.website.description}}</p>
+        <img mat-card-image *ngIf="gitOrganization.website.images.length > 0" [src]="gitOrganization.website.images[0]">
+      </mat-card-content>
+    </mat-card>
+    <mat-card *ngIf="gitOrganization && !gitOrganization?.websiteUrl">
+      <mat-card-header>
+        <mat-card-title>
+          <p><b>Website</b></p>
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="centered">
+        <mat-icon class="warning-icon">warning</mat-icon>
+        <p>{{coin.name}} isn't linked yet. Please provide the official website url</p>
+        <form [formGroup]="websiteForm" class="form" role="form">
+          <div class="form-block">
+            <mat-form-field>
+              <input matInput type="text" placeholder="{{coin.name}} website url" formControlName="website" [disabled]="isWebsiteFormSubmitted">
+            </mat-form-field>
+          </div>
+          <div class="form-block">
+            <button mat-button [disabled]="!websiteForm.valid || isWebsiteFormSubmitted" (click)="updateWebsite()">Save</button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </section>
+  <section *ngIf="coin && coin.gitStatus && coin.gitStatus.synced && gitOrganization" class="tabs-wrapper">
+    <mat-card *ngIf="gitRepositories.length > 0 || gitMembers.length > 0">
+      <mat-tab-group>
+        <mat-tab label="Repositories" *ngIf="gitRepositories.length > 0">
+          <table class="repos-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Primary language</th>
+                <th>Assignable users</th>
+                <th>Fork count</th>
+                <th>Forks</th>
+                <th>Issues</th>
+                <th>Commits</th>
+                <th>Milestones</th>
+                <th>Languages</th>
+                <th>Projects</th>
+                <th>Pull requests</th>
+                <th>Releases</th>
+                <th>Stargazers</th>
+                <th>watchers</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let repo of gitRepositories">
+                <td><p><a [href]="'https://github.com'+repo.resourcePath" target="_blank" class="external-link">{{repo.name}}</a></p></td>
+                <td><p>{{repo.primaryLanguage?repo.primaryLanguage.name:'?' }}</p></td>
+                <td><p>{{repo.assignableUsers?repo.assignableUsers:'0' | number}}</p></td>
+                <td><p>{{repo.forkCount?repo.forkCount:'0' | number}}</p></td>
+                <td><p>{{repo.forks?repo.forks:'0' | number}}</p></td>
+                <td><p>{{repo.issues?repo.issues:'0' | number}}</p></td>
+                <td><p>{{repo.defaultBranchRef?.target?.history?.totalCount?repo.defaultBranchRef?.target?.history?.totalCount:'0' | number}}</p></td>
+                <td><p>{{repo.milestones?repo.milestones:'0' | number}}</p></td>
+                <td><p>{{repo.languages?repo.languages:'0' | number}}</p></td>
+                <td><p>{{repo.projects?repo.projects:0 | number}}</p></td>
+                <td><p>{{repo.pullRequests?repo.pullRequests:'0' | number}}</p></td>
+                <td><p>{{repo.releases?repo.releases:'0' | number}}</p></td>
+                <td><p>{{repo.stargazers?repo.stargazers:'0' | number}}</p></td>
+                <td><p>{{repo.watchers?repo.watchers:'0' | number}}</p></td>
+              </tr>
+            </tbody>
+          </table>
+        </mat-tab>
+        <mat-tab label="Members" *ngIf="gitMembers.length > 0">
+          <div class="grid-members">
+            <div class="member" *ngFor="let member of gitMembers">
+              <div class="member-intro">
+                <div class="image-wrapper">
+                  <img [src]="member.avatarUrl"/>
+                </div>
+                <div class="info-wrapper">
+                  <p>{{member.name?member.name:member.login}}<br/>
+                  <a [href]="member.url" target="_blank" class="external-link">@{{member.login}}</a></p>
+                </div>
+                <div class="contact-wrapper">
+                  <mat-icon *ngIf="member.email" [matTooltip]="member.email">email</mat-icon>
+                </div>
+              </div>
+              <div class="stats-wrapper">
+                <table class="first member-table">
+                  <thead>
+                    <th>Organizations</th>
+                    <th>Repositories</th>
+                    <th>Watching</th>
+                  </thead>
+                  <tbody>
+                    <td>{{member.organizations}}
+                    <td>{{member.repositories}}</td>
+                    <td>{{member.watching}}</td>
+                  </tbody>
+                </table>
+                <table>
+                  <thead>
+                    <th>Pull requests</th>
+                    <th>Stared</th>
+                    <th>Followers</th>
+                  </thead>
+                  <tbody>
+                    <td>{{member.pullRequests}}</td>
+                    <td>{{member.starredRepositories}}</td>
+                    <td>{{member.followers}}</td>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-card>
+  </section>
+</div>
