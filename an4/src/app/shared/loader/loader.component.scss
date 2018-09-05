@@ -1,0 +1,21 @@
+.loader{
+    position: absolute;
+    z-index: 101;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    text-align: center;
+}
+
+mat-spinner{
+    display: flex;
+    justify-content:center;
+    align-content:center;
+    flex-direction:column;
+    align-items: center;
+    margin-left: auto;
+    margin-right: auto;
+    &::ng-deep circle{
+        stroke:#2940A4;
+    }
+}
