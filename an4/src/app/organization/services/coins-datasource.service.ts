@@ -107,18 +107,18 @@ export class CoinsDataSource extends DataSource<any> {
                     });
                 }
                 break;
-            
-            case 'volume':
+            case 'currentSupply':
                 if (this.sort.direction === 'desc') {
                     result = this.dao.coins.value.sort((a, b) => {
-                        return b.finance.volume - a.finance.volume;
+                        return b.finance.currentSupply - a.finance.currentSupply;
                     });
                 } else {
                     result = this.dao.coins.value.sort((a, b) => {
-                        return a.finance.volume - b.finance.volume;
+                        return a.finance.currentSupply - b.finance.currentSupply;
                     });
                 }
                 break;
+            
             case 'changeDay':
                 if (this.sort.direction === 'desc') {
                     result = this.dao.coins.value.sort((a, b) => {
