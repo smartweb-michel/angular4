@@ -96,17 +96,7 @@ export class CoinsDataSource extends DataSource<any> {
                     });
                 }
                 break;
-            case 'marketCap':
-                if (this.sort.direction === 'desc') {
-                    result = this.dao.coins.value.sort((a, b) => {
-                        return b.finance.marketCap - a.finance.marketCap;
-                    });
-                } else {
-                    result = this.dao.coins.value.sort((a, b) => {
-                        return a.finance.marketCap - b.finance.marketCap;
-                    });
-                }
-                break;
+            
             case 'currentSupply':
                 if (this.sort.direction === 'desc') {
                     result = this.dao.coins.value.sort((a, b) => {
