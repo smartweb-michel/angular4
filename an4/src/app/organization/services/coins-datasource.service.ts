@@ -74,7 +74,17 @@ export class CoinsDataSource extends DataSource<any> {
                     });
                 }
                 break;
-            
+            case 'name':
+                if (this.sort.direction === 'desc') {
+                    result = this.dao.coins.value.sort((a, b) => {
+                        return b.name.toLowerCase() > a.name.toLowerCase() ? -1 : 1;
+                    });
+                } else {
+                    result = this.dao.coins.value.sort((a, b) => {
+                        return a.name.toLowerCase() > b.name.toLowerCase() ? -1 : 1;
+                    });
+                }
+                break;
             case 'price':
                 if (this.sort.direction === 'desc') {
                     result = this.dao.coins.value.sort((a, b) => {
