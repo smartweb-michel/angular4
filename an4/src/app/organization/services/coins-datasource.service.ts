@@ -63,7 +63,17 @@ export class CoinsDataSource extends DataSource<any> {
     public getSortData = () => {
         let result = this.dao.coins.value;
         switch (this.sort.active) {
-            
+            case 'rank':
+                if (this.sort.direction === 'desc') {
+                    result = this.dao.coins.value.sort((a, b) => {
+                        return b.finance.rank - a.finance.rank;
+                    });
+                } else {
+                    result = this.dao.coins.value.sort((a, b) => {
+                        return a.finance.rank - b.finance.rank;
+                    });
+                }
+                break;
             case 'name':
                 if (this.sort.direction === 'desc') {
                     result = this.dao.coins.value.sort((a, b) => {
