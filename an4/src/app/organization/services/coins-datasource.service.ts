@@ -34,7 +34,7 @@ export class CoinsDataSource extends DataSource<any> {
             if (this.filter) {
                 result = this.getSortData().map((c) => {
                     return c.name.toLowerCase().indexOf(this.filter.toLowerCase()) !== -1 ||
-                    
+                    c.slug.toLowerCase().indexOf(this.filter.toLowerCase()) !== -1 ||
                     c.symbol.toLowerCase().indexOf(this.filter.toLowerCase()) !== -1 ? c : false;
                 }).filter(Boolean);
             } else {
