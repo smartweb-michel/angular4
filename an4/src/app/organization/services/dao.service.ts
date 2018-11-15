@@ -10,6 +10,8 @@ export class DaoService {
   public coins: BehaviorSubject<any[]> = new BehaviorSubject([]);
   public onlineCoins: BehaviorSubject<any[]> = new BehaviorSubject([]);
   public offlineCoins: BehaviorSubject<any[]> = new BehaviorSubject([]);
+  public organizations: BehaviorSubject<any[]> = new BehaviorSubject([]);
+  public repositories: BehaviorSubject<any[]> = new BehaviorSubject([]);
   
 
   public constructor(
