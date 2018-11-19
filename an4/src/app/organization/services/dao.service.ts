@@ -12,7 +12,7 @@ export class DaoService {
   public offlineCoins: BehaviorSubject<any[]> = new BehaviorSubject([]);
   public organizations: BehaviorSubject<any[]> = new BehaviorSubject([]);
   public repositories: BehaviorSubject<any[]> = new BehaviorSubject([]);
-  
+  public members: BehaviorSubject<any[]> = new BehaviorSubject([]);
 
   public constructor(
     private db: AngularFirestore
