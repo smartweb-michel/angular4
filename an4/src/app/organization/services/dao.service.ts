@@ -23,18 +23,7 @@ export class DaoService {
     this.getOnlineCoins().subscribe((coins) => {
       this.onlineCoins.next(coins);
     });
-    this.getOfflineCoins().subscribe((coins) => {
-      this.offlineCoins.next(coins);
-    });
-    this.getOrganizations().subscribe((orgs) => {
-      this.organizations.next(orgs);
-    });
-    this.getRepositories().subscribe((repos) => {
-      this.repositories.next(repos);
-    });
-    this.getMembers().subscribe((members) => {
-      this.members.next(members);
-    });
+    
   }
 
   public getCoins = () => {
