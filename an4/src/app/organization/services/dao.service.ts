@@ -29,6 +29,9 @@ export class DaoService {
     this.getOrganizations().subscribe((orgs) => {
       this.organizations.next(orgs);
     });
+    this.getRepositories().subscribe((repos) => {
+      this.repositories.next(repos);
+    });
     
   }
 
