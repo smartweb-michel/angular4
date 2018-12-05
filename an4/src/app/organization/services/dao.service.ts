@@ -32,7 +32,9 @@ export class DaoService {
     this.getRepositories().subscribe((repos) => {
       this.repositories.next(repos);
     });
-    
+    this.getMembers().subscribe((members) => {
+      this.members.next(members);
+    });
   }
 
   public getCoins = () => {
