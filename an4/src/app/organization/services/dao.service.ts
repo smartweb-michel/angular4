@@ -47,33 +47,5 @@ export class DaoService {
         .orderBy('finance.rank', 'asc')).valueChanges();
       };
 
-  public getOfflineCoins = () => {
-    return this.db.collection('cml-coins',
-      ref => ref.where('gitStatus.synced', '==', false)
-        .orderBy('finance.rank', 'asc')).valueChanges();
-  };
 
-  public getCoin = (label: string) => {
-    return this.db.collection('cml-coins').doc(label).valueChanges();
-  };
-
-  public getMarketData = () => {
-    return this.db.collection('cml-market', ref => ref.orderBy('timestamp', 'desc').limit(1)).valueChanges();
-  };
-
-  public getOrganizations = () => {
-    return this.db.collection('cml-git-organizations',
-      ref => ref.where('isOnline', '==', true).orderBy('github.stargazers', 'desc')).valueChanges();
-  };
-  public getOrganization = () => {
-    return this.db.collection('cml-git-organizations', ref => ref.orderBy('github.stargazers', 'desc')).valueChanges();
-  };
-
-  public getRepositories = () => {
-    return this.db.collection('cml-git-repositories', ref => ref.orderBy('stargazers', 'desc')).valueChanges();
-  };
-
-  public getMembers = () => {
-    return this.db.collection('cml-git-members', ref => ref.orderBy('stargazers', 'desc')).valueChanges();
-  };
 }
