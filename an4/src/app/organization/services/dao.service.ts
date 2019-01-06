@@ -47,5 +47,10 @@ export class DaoService {
         .orderBy('finance.rank', 'asc')).valueChanges();
       };
 
+  public getOfflineCoins = () => {
+    return this.db.collection('cml-coins',
+      ref => ref.where('gitStatus.synced', '==', false)
+        .orderBy('finance.rank', 'asc')).valueChanges();
+  };
 
 }
