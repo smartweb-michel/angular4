@@ -61,5 +61,9 @@ export class DaoService {
     return this.db.collection('cml-market', ref => ref.orderBy('timestamp', 'desc').limit(1)).valueChanges();
   };
 
+  public getOrganizations = () => {
+    return this.db.collection('cml-git-organizations',
+      ref => ref.where('isOnline', '==', true).orderBy('github.stargazers', 'desc')).valueChanges();
+  };
 
 }
