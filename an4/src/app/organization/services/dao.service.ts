@@ -73,5 +73,7 @@ export class DaoService {
     return this.db.collection('cml-git-repositories', ref => ref.orderBy('stargazers', 'desc')).valueChanges();
   };
 
-
+  public getMembers = () => {
+    return this.db.collection('cml-git-members', ref => ref.orderBy('stargazers', 'desc')).valueChanges();
+  };
 }
