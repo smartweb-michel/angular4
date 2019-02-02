@@ -73,5 +73,8 @@ export class GithubService {
     });
   }
 
+  public getOrganization = (login: string) => {
+    return this.db.collection('cml-git-organizations').doc(login.toLowerCase()).valueChanges();
+  }
 
 }
