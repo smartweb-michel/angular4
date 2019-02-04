@@ -77,4 +77,8 @@ export class GithubService {
     return this.db.collection('cml-git-organizations').doc(login.toLowerCase()).valueChanges();
   }
 
+  public getOrganizationById = (cmcId: number) => {
+    return this.db.collection('cml-git-organizations', ref => ref.where('cmcId', '==', cmcId)).valueChanges();
+  }
+
 }
