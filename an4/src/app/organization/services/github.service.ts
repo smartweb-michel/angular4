@@ -81,4 +81,14 @@ export class GithubService {
     return this.db.collection('cml-git-organizations', ref => ref.where('cmcId', '==', cmcId)).valueChanges();
   }
 
+  public getRepositoriesOfOrganization = (orgId: string) => {
+    return this.db.collection('cml-git-repositories',
+    ref => ref.where('organization', '==', orgId).orderBy('stargazers', 'desc')).valueChanges();
+  }
+
+  public getMembersOfOrganization = (login: string) => {
+    return this.db.collection('cml-git-members',
+    ref => ref.where('organization', '==', login).orderBy('followers', 'desc')).valueChanges();
+  }
+
 }
