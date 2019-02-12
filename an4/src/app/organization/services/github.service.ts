@@ -91,4 +91,8 @@ export class GithubService {
     ref => ref.where('organization', '==', login).orderBy('followers', 'desc')).valueChanges();
   }
 
+  public getGitPoolRequest = (requestId: string) => {
+    return this.db.collection('cml-pool-requests').doc(requestId).valueChanges();
+  }
+
 }
