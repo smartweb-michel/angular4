@@ -108,4 +108,11 @@ export class GithubService {
     });
   }
 
+  public retryGithubSync = (requestId: string) => {
+    return this.db.collection('cml-pool-requests').doc(requestId).update({
+      status: 0,
+      trial: 0
+    });
+  }
+
 }
