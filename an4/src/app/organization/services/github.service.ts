@@ -95,4 +95,17 @@ export class GithubService {
     return this.db.collection('cml-pool-requests').doc(requestId).valueChanges();
   }
 
+  public linkGithubOrganization = (slug: string, login: string) => {
+    return this.db.collection('cml-coins').doc(slug).update({
+      gitStatus: {
+        synced: true,
+        syncing: false,
+        available: true
+      }
+    })
+    .then(() => {
+      return this.db.collection('cml-git-organizations').doc(login.toLowerCase()).update({isOnline: true});
+    });
+  }
+
 }
