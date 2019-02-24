@@ -145,5 +145,14 @@ export class GithubService {
     });
   }
 
-
+  public updateOrganizationWebsite = (orgLogin: string, websiteUrl: string) => {
+    return this.db.collection('cml-git-organizations').doc(orgLogin)
+    .set({
+      websiteUrl
+    }, {merge: true})
+    .then(() => {
+      const url = this.SERVER_URL + 'org/website-update/' + orgLogin;
+      return this.http.get(url);
+    });
+  }
 }
