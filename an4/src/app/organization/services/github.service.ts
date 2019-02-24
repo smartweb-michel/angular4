@@ -135,4 +135,15 @@ export class GithubService {
     });
   }
 
+  public enableGithub = (slug: string) => {
+    return this.db.collection('cml-coins').doc(slug).update({
+      gitStatus: {
+        synced: false,
+        syncing: false,
+        available: true
+      }
+    });
+  }
+
+
 }
